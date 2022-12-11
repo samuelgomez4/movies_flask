@@ -8,12 +8,18 @@ repository = MovieRepository()
 
 @app.route("/api/movies", methods=["GET"])
 def list():
-    return repository.findAll()
+    movies = repository.findAll()
+    response = []
+    for movie in movies:
+        response.append(movie.toDic())
+
+    return response, 200
 
 
 @app.route("/api/movies/<code>", methods=["GET"])
 def findByCode(code):
-    return repository.findByCode(code)
+    movie = repository.findByCode(code)
+    return movie.toDic(), 200
 
 
 @app.route("/api/movies", methods=["POST"])
@@ -22,6 +28,8 @@ def create():
     name = request.json["name"]
     image = request.json["image_url"]
     year = request.json["year"]
+
     movie = Movie(code, name, image_url=image, year=year)
     repository.insert(movie)
+
     return "{ 'message': 'Success' }", 201
